@@ -1,6 +1,10 @@
 #To-do before start
 
 
+#install nodejs (tried with legacy)
+sudo apt-get install nodejs-legacy 
+
+
 Following this guide:
 
 #webpack can be installed through npm
