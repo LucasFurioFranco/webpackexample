@@ -45,7 +45,16 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	cats = __webpack_require__(1);
-	console.log(cats);
+	Person = __webpack_require__(1);
+
+	var persons = [
+	  new Person("fulano"),
+	  new Person("ciclano")
+	];
+
+	person[0].say("hellom how are you?");
+	person[1].say("I'm fine, how about you?");
+	person[0].shout("GO TO HELL");
 
 
 /***/ },
