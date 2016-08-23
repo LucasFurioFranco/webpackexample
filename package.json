@@ -1,0 +1,26 @@
+{
+  "name": "webpackexample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "webpack": "^1.13.2"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.15.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasFurioFranco/webpackexample.git"
+  },
+  "author": "Lucas Furio Franco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LucasFurioFranco/webpackexample/issues"
+  },
+  "homepage": "https://github.com/LucasFurioFranco/webpackexample#readme"
+}
