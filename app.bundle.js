@@ -47,28 +47,50 @@
 	"use strict"
 	const _config = __webpack_require__(1);
 	const Person = __webpack_require__(2)(_config.path.classes + 'Person.js');
-	let cats = __webpack_require__(4)(_config.path.classes + 'Cat.js');
+	let cats = __webpack_require__(6)(_config.path.classes + 'Cat.js');
 
 	let person = [
 	  new Person("fulano"),
 	  new Person("ciclano")
 	];
 
-	person[0].say("hellom how are you?");
-	person[1].say("I'm fine, how about you?");
-	person[0].shout("GO TO HELL");
+	var a = person[0];
+	var b = person[1];
+
+	a.say("hellom how are you?");
+	b.say("I'm fine, how about you?");
+	a.shout("GO TO HELL");
+
+	a.collectItem({
+	  'type': 'money',
+	  'value': 1,
+	  'quantity' : 1
+	});
+
+	a.collectItem({
+	  'type': 'keys',
+	  'keySecret': 'ande421184',
+	  'quantity' : 3
+	});
+
+	b.collectItem(a.discartLasttItem());
+
+	a.printItens();
+
+	b.printItens();
 
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
 
-	__config__ = {
-	  'path': {
-	    'classes' : './src/Classes/'
-	  }
-	}
-	module.exports = __config__;
+	module.exports = (function(){
+	  return {
+	    'path': {
+	      'classes' : './src/Classes/'
+	    }
+	  };
+	})();
 
 
 /***/ },
@@ -94,29 +116,140 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
+
+	const Item = __webpack_require__(4);
+	const Weapon = __webpack_require__(5);
+
+
+	function getMeleeDamage(){
+	  return 1;
+	}
+
+	function getDistanceDamage(){
+	  return 1;
+	}
+
 	class Person{
-	  constructor(name){
+	  constructor(name, life, position){
 	    this.name = name;
+	    this.life = life;
+	    this.position = position;
+	    this.itens = new Array();
+
+	    this.skill = {
+	      'endurance': {'value': 1, 'experience': 1},
+	      'strength': {'value': 1, 'experience': 1},
+	      'speed': {'value': 1, 'experience': 1},
+	      'dexterity': {'value': 1, 'experience': 1},
+	      'aim': {'value': 1, 'experience': 1}
+	    };
+
+	    this.equip = {
+	      'pocket1': undefined, 'pocket2': undefined,
+	      'handLeft': undefined, 'handRight': undefined,
+	      'armLeft': undefined, 'armRight': undefined,
+	      'feet': undefined,
+	      'legs': undefined,
+	      'torso': undefined,
+	      'ammo': 1
+	    }
+
 	    this.say = function(str){
 	      console.log(this.name + " says \"" + str + "\"");
-	    }
+	    };
 	    this.shout = function(str){
 	      console.log(this.name + " shouts \"" + str + "\"");
 	    };
+	    this.collectItem = function(item){
+	      this.itens.push(item);
+	      console.log(this.name + " got the item " + JSON.stringify(item));
+	    };
+	    this.discartLasttItem = function(){
+	      let item = this.itens.pop();
+	      console.log(this.name + " drop the item " + JSON.stringify(item));
+	      return item;
+	    };
+	    this.printItens = function(){
+	      console.log(this.name + " have " + JSON.stringify(this.itens));
+	    };
+	    this.attack = function(){
+
+	    }
 	  };
 	}
+
 	module.exports = Person;
 
 
 /***/ },
 /* 4 */
+/***/ function(module, exports) {
+
+	"use strict"
+
+	class Item{
+	  constructor(name, type, value){
+	    this.name = name;
+	    this.type = type;
+	    this.value = value;
+	  }
+	}
+
+	module.exports = Item;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict"
+
+	const Item = __webpack_require__(4);
+
+
+	class Weapon extends Item{
+	  constructor(name, type, value, weaponType, range, dificulty, baseDamage){
+	    super(name, type, value);
+	    this.weaponType = weaponType;
+	    this.range = range;
+	    this.dificulty = dificulty;
+
+	    this.getWeaponType = function(){
+	      return weaponType;
+	    }
+	    this.range = function(){
+	      return range;
+	    }
+
+	    this.getMeleeDamage = function(){
+	      return baseDamage;
+	    }
+	    this.getRangedDammage = function(){
+	      return baseDamage;
+	    }
+	    this.getDammage = function(){
+	      if(this.weaponType == "melee"){
+	        return this.getMeleeDamage();
+	      }
+	      if(this.weaponType == "ranged"){
+	        return this.getRangedDammage();
+	      }
+	    }
+	  }
+	}
+
+	module.exports = Weapon;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./src/Classes/Cat.js": 5
+		"./src/Classes/Cat.js": 7
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -129,11 +262,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 4;
+	webpackContext.id = 6;
 
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var cats = ['dave', 'henry', 'martha'];
