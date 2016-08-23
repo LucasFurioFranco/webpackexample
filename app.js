@@ -1,7 +1,9 @@
-cats = require('./cats.js');
-Person = require('./Person.js');
+"use strict"
+const _config = require('./src/path.js');
+const Person = require(_config.path.classes + 'Person.js');
+let cats = require(_config.path.classes + 'Cat.js');
 
-var persons = [
+let person = [
   new Person("fulano"),
   new Person("ciclano")
 ];
