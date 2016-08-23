@@ -47,7 +47,7 @@
 	"use strict"
 	const _config = __webpack_require__(1);
 	const Person = __webpack_require__(2)(_config.path.classes + 'Person.js');
-	let cats = __webpack_require__(6)(_config.path.classes + 'Cat.js');
+	let cats = __webpack_require__(7)(_config.path.classes + 'Cat.js');
 
 	let person = [
 	  new Person("fulano"),
@@ -122,6 +122,7 @@
 
 	const Item = __webpack_require__(4);
 	const Weapon = __webpack_require__(5);
+	const SkillSet = __webpack_require__(6);
 
 
 	function getMeleeDamage(){
@@ -176,8 +177,17 @@
 	      console.log(this.name + " have " + JSON.stringify(this.itens));
 	    };
 	    this.attack = function(){
-
-	    }
+	      let damage = 0;
+	      if(handRight && handRight.type == weapon){
+	        return handRight.getDammage();
+	      }
+	      else{
+	        return this.strength;
+	      }
+	    };
+	    this.receiveDamage = function(damage){
+	      this.life
+	    };
 	  };
 	}
 
@@ -246,10 +256,50 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	"use strict"
+
+	class SkillSet{
+	  constructor(){
+	    this.skill = {
+	      'endurance': {'value': 1},
+	      'strength': {'value': 1},
+	      'speed': {'value': 1},
+	      'dexterity': {'value': 1},
+	      'aim': {'value': 1}
+	    };
+	    this.experience = {
+	      'endurance': 1,
+	      'strength': 1,
+	      'speed': 1,
+	      'dexterity': 1,
+	      'aim': 1
+	    };
+	    this.facility = {
+	      'endurance': 1,
+	      'strength': 1,
+	      'speed': 1,
+	      'dexterity': 1,
+	      'aim': 1
+	    };
+	    this.getSkill = function(s){
+	      return this.skill[s];
+	    };
+	    this.getExperience = function(s){
+	      return this.experience[s];
+	    };
+	  };
+	}
+	module.exports = SkillSet;
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./src/Classes/Cat.js": 7
+		"./src/Classes/Cat.js": 8
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -262,11 +312,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 6;
+	webpackContext.id = 7;
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	var cats = ['dave', 'henry', 'martha'];

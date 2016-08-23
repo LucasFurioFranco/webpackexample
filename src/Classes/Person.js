@@ -2,6 +2,7 @@
 
 const Item = require('./Item.js');
 const Weapon = require('./Weapon.js');
+const SkillSet = require('./SkillSet.js');
 
 
 function getMeleeDamage(){
@@ -56,8 +57,17 @@ class Person{
       console.log(this.name + " have " + JSON.stringify(this.itens));
     };
     this.attack = function(){
-
-    }
+      let damage = 0;
+      if(handRight && handRight.type == weapon){
+        return handRight.getDammage();
+      }
+      else{
+        return this.strength;
+      }
+    };
+    this.receiveDamage = function(damage){
+      this.life -= damage;
+    };
   };
 }
 
