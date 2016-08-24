@@ -1,7 +1,6 @@
 "use strict"
 const _config = require('./src/config.js');
 const Person = require(_config.path.classes + 'Person.js');
-let cats = require(_config.path.classes + 'Cat.js');
 
 let person = [
   new Person("fulano"),
@@ -32,3 +31,12 @@ b.collectItem(a.discartLasttItem());
 a.printItens();
 
 b.printItens();
+
+console.log("\n\n");
+
+b.receiveDamage(a.attack());
+b.receiveDamage(a.attack());
+a.receiveDamage(b.attack());
+b.receiveDamage(a.attack());
+a.receiveDamage(b.attack());
+a.receiveDamage(b.attack());

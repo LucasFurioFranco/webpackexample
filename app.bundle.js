@@ -47,7 +47,6 @@
 	"use strict"
 	const _config = __webpack_require__(1);
 	const Person = __webpack_require__(2)(_config.path.classes + 'Person.js');
-	let cats = __webpack_require__(7)(_config.path.classes + 'Cat.js');
 
 	let person = [
 	  new Person("fulano"),
@@ -79,10 +78,21 @@
 
 	b.printItens();
 
+	console.log("\n\n");
+
+	b.receiveDamage(a.attack());
+	b.receiveDamage(a.attack());
+	a.receiveDamage(b.attack());
+	b.receiveDamage(a.attack());
+	a.receiveDamage(b.attack());
+	a.receiveDamage(b.attack());
+
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
+
+	"use strict"
 
 	module.exports = (function(){
 	  return {
@@ -135,18 +145,13 @@
 
 	class Person{
 	  constructor(name, life, position){
+	    life = Number(life) || 100;
+
 	    this.name = name;
 	    this.life = life;
 	    this.position = position;
 	    this.itens = new Array();
-
-	    this.skill = {
-	      'endurance': {'value': 1, 'experience': 1},
-	      'strength': {'value': 1, 'experience': 1},
-	      'speed': {'value': 1, 'experience': 1},
-	      'dexterity': {'value': 1, 'experience': 1},
-	      'aim': {'value': 1, 'experience': 1}
-	    };
+	    this.skill = new SkillSet();
 
 	    this.equip = {
 	      'pocket1': undefined, 'pocket2': undefined,
@@ -156,7 +161,7 @@
 	      'legs': undefined,
 	      'torso': undefined,
 	      'ammo': 1
-	    }
+	    };
 
 	    this.say = function(str){
 	      console.log(this.name + " says \"" + str + "\"");
@@ -176,17 +181,25 @@
 	    this.printItens = function(){
 	      console.log(this.name + " have " + JSON.stringify(this.itens));
 	    };
+
 	    this.attack = function(){
 	      let damage = 0;
-	      if(handRight && handRight.type == weapon){
-	        return handRight.getDammage();
+	      if(this.equip.handRight && this.equip.handRight.type === "weapon"){
+	        damage = this.equip.handRight.getDammage() || 0;
+	console.log("1.0: " + damage);
 	      }
 	      else{
-	        return this.strength;
+	        damage = this.skill.getSkill("strength");
+	console.log("1.1: " + damage);
 	      }
+	      console.log(this.name + " defers " + damage + " of brute damage");
+	console.log("2.0: " + damage);
+	      return damage;
 	    };
 	    this.receiveDamage = function(damage){
-	      this.life
+	      this.life -= damage;
+	      console.log(this.name + " receive " + damage + " of damage. Life now: " + this.life);
+	      return life;
 	    };
 	  };
 	}
@@ -261,27 +274,33 @@
 	"use strict"
 
 	class SkillSet{
-	  constructor(){
+	  constructor(endurance, strength, speed, dexterity, aim){
+	    endurance = endurance || 1;
+	    strength = strength || 1;
+	    speed = speed || 1;
+	    dexterity = dexterity || 1;
+	    aim = aim || 1;
+
 	    this.skill = {
-	      'endurance': {'value': 1},
-	      'strength': {'value': 1},
-	      'speed': {'value': 1},
-	      'dexterity': {'value': 1},
-	      'aim': {'value': 1}
+	      'endurance': endurance,
+	      'strength': strength,
+	      'speed': speed,
+	      'dexterity': dexterity,
+	      'aim': aim
 	    };
 	    this.experience = {
-	      'endurance': 1,
-	      'strength': 1,
-	      'speed': 1,
-	      'dexterity': 1,
-	      'aim': 1
+	      'endurance': endurance,
+	      'strength': strength,
+	      'speed': speed,
+	      'dexterity': dexterity,
+	      'aim': aim
 	    };
 	    this.facility = {
-	      'endurance': 1,
-	      'strength': 1,
-	      'speed': 1,
-	      'dexterity': 1,
-	      'aim': 1
+	      'endurance': endurance,
+	      'strength': strength,
+	      'speed': speed,
+	      'dexterity': dexterity,
+	      'aim': aim
 	    };
 	    this.getSkill = function(s){
 	      return this.skill[s];
@@ -289,38 +308,13 @@
 	    this.getExperience = function(s){
 	      return this.experience[s];
 	    };
+	    this.addSkillExperience = function(s, e){
+	      this.experience[s] = Number(this.experience[s]) + Number(e);
+	      return this.experience[s]
+	    }
 	  };
 	}
 	module.exports = SkillSet;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./src/Classes/Cat.js": 8
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 7;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	var cats = ['dave', 'henry', 'martha'];
-	module.exports = cats;
 
 
 /***/ }

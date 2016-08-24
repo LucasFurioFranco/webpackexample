@@ -15,18 +15,13 @@ function getDistanceDamage(){
 
 class Person{
   constructor(name, life, position){
+    life = Number(life) || 100;
+
     this.name = name;
     this.life = life;
     this.position = position;
     this.itens = new Array();
-
-    this.skill = {
-      'endurance': {'value': 1, 'experience': 1},
-      'strength': {'value': 1, 'experience': 1},
-      'speed': {'value': 1, 'experience': 1},
-      'dexterity': {'value': 1, 'experience': 1},
-      'aim': {'value': 1, 'experience': 1}
-    };
+    this.skill = new SkillSet();
 
     this.equip = {
       'pocket1': undefined, 'pocket2': undefined,
@@ -36,7 +31,7 @@ class Person{
       'legs': undefined,
       'torso': undefined,
       'ammo': 1
-    }
+    };
 
     this.say = function(str){
       console.log(this.name + " says \"" + str + "\"");
@@ -56,17 +51,25 @@ class Person{
     this.printItens = function(){
       console.log(this.name + " have " + JSON.stringify(this.itens));
     };
+
     this.attack = function(){
       let damage = 0;
-      if(handRight && handRight.type == weapon){
-        return handRight.getDammage();
+      if(this.equip.handRight && this.equip.handRight.type === "weapon"){
+        damage = this.equip.handRight.getDammage() || 0;
+console.log("1.0: " + damage);
       }
       else{
-        return this.strength;
+        damage = this.skill.getSkill("strength");
+console.log("1.1: " + damage);
       }
+      console.log(this.name + " defers " + damage + " of brute damage");
+console.log("2.0: " + damage);
+      return damage;
     };
     this.receiveDamage = function(damage){
       this.life -= damage;
+      console.log(this.name + " receive " + damage + " of damage. Life now: " + this.life);
+      return life;
     };
   };
 }

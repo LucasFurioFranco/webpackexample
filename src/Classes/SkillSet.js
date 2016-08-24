@@ -1,27 +1,33 @@
 "use strict"
 
 class SkillSet{
-  constructor(){
+  constructor(endurance, strength, speed, dexterity, aim){
+    endurance = endurance || 1;
+    strength = strength || 1;
+    speed = speed || 1;
+    dexterity = dexterity || 1;
+    aim = aim || 1;
+
     this.skill = {
-      'endurance': {'value': 1},
-      'strength': {'value': 1},
-      'speed': {'value': 1},
-      'dexterity': {'value': 1},
-      'aim': {'value': 1}
+      'endurance': endurance,
+      'strength': strength,
+      'speed': speed,
+      'dexterity': dexterity,
+      'aim': aim
     };
     this.experience = {
-      'endurance': 1,
-      'strength': 1,
-      'speed': 1,
-      'dexterity': 1,
-      'aim': 1
+      'endurance': endurance,
+      'strength': strength,
+      'speed': speed,
+      'dexterity': dexterity,
+      'aim': aim
     };
     this.facility = {
-      'endurance': 1,
-      'strength': 1,
-      'speed': 1,
-      'dexterity': 1,
-      'aim': 1
+      'endurance': endurance,
+      'strength': strength,
+      'speed': speed,
+      'dexterity': dexterity,
+      'aim': aim
     };
     this.getSkill = function(s){
       return this.skill[s];
@@ -29,6 +35,10 @@ class SkillSet{
     this.getExperience = function(s){
       return this.experience[s];
     };
+    this.addSkillExperience = function(s, e){
+      this.experience[s] = Number(this.experience[s]) + Number(e);
+      return this.experience[s]
+    }
   };
 }
 module.exports = SkillSet;
