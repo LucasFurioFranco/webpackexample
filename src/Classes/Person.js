@@ -56,14 +56,14 @@ class Person{
       let damage = 0;
       if(this.equip.handRight && this.equip.handRight.type === "weapon"){
         damage = this.equip.handRight.getDammage() || 0;
-console.log("1.0: " + damage);
+//console.log("1.0: " + damage);
       }
       else{
         damage = this.skill.getSkill("strength");
-console.log("1.1: " + damage);
+//console.log("1.1: " + damage);
       }
       console.log(this.name + " defers " + damage + " of brute damage");
-console.log("2.0: " + damage);
+//console.log("2.0: " + damage);
       return damage;
     };
     this.receiveDamage = function(damage){
