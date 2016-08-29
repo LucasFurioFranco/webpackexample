@@ -1,42 +1,14 @@
 "use strict"
 const _config = require('./src/config.js');
 const Person = require(_config.path.classes + 'Person.js');
+const Map = require(_config.path.classes + 'Map.js');
+const Canvas = document.getElementById(_config.canvasId);
+const CanvasContext = Canvas.getContext("2d");
 
-let person = [
-  new Person("fulano"),
-  new Person("ciclano")
-];
+function draw(){
+  CanvasContext.fillStyle =  "#123456";
+	CanvasContext.fillRect(0, 0, 100, 200);
+}
 
-var a = person[0];
-var b = person[1];
-
-a.say("hellom how are you?");
-b.say("I'm fine, how about you?");
-a.shout("GO TO HELL");
-
-a.collectItem({
-  'type': 'money',
-  'value': 1,
-  'quantity' : 1
-});
-
-a.collectItem({
-  'type': 'keys',
-  'keySecret': 'ande421184',
-  'quantity' : 3
-});
-
-b.collectItem(a.discartLasttItem());
-
-a.printItens();
-
-b.printItens();
-
-console.log("\n\n");
-
-b.receiveDamage(a.attack());
-b.receiveDamage(a.attack());
-a.receiveDamage(b.attack());
-b.receiveDamage(a.attack());
-a.receiveDamage(b.attack());
-a.receiveDamage(b.attack());
+let map = new Map();
+let player = new Person();
