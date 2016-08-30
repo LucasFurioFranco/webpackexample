@@ -46,18 +46,52 @@
 
 	"use strict"
 	const _config = __webpack_require__(1);
+
 	const Person = __webpack_require__(2)(_config.path.classes + 'Person.js');
-	const Map = __webpack_require__(7)(_config.path.classes + 'Map.js');
+	const Wall = __webpack_require__(4)(_config.path.classes + 'Wall.js');
+	const Map = __webpack_require__(6)(_config.path.classes + 'Map.js');
+	const Bullet = __webpack_require__(231)(_config.path.classes + 'Bullet.js');
+	const BackEnd = __webpack_require__(232)(_config.path.classes + 'BackEnd.js');
+
 	const Canvas = document.getElementById(_config.canvasId);
 	const CanvasContext = Canvas.getContext("2d");
+
+	if(_config.debug)console.log('creating persons');
+	let person1 = new Person('p1', 100, {'x': 100, 'y': 300}, {'x': 1, 'y': 0}, 5);
+	if(_config.debug)person1.identity();
+	let person2 = new Person('p2', 100, {'x': 500, 'y': 300}, {'x': -1, 'y': 0}, 5);
+	if(_config.debug)person2.identity();
+
+	if(_config.debug)console.log('creating walls');
+	let walls = [
+	  new Wall({'x': 300, 'y': 300}, {'x': 1, 'y': 1}, 100, 10),
+	  new Wall({'x': 100, 'y': 100}, {'x': 1, 'y': 0}, 100, 10),
+	  new Wall({'x': 500, 'y': 500}, {'x': 0, 'y': 1}, 100, 10)
+	];
+	walls.forEach(function(wall, idx){
+	  if(_config.debug)console.info(idx + ": ");
+	  if(_config.debug)wall.identity();
+	})
+
+	if(_config.debug)console.log('creating map');
+	let map = new Map(walls, [person1, person2], []);
+	if(_config.debug)map.identity();
+
+	if(_config.debug)console.log('creating backend');
+	let backend = new BackEnd([[map]]);
+	if(_config.debug)backend.identify();
 
 	function draw(){
 	  CanvasContext.fillStyle =  "#123456";
 		CanvasContext.fillRect(0, 0, 100, 200);
-	}
+	};
 
-	let map = new Map();
-	let player = new Person();
+	person1.shout("fuuuuuuuu");
+
+	person2.receiveDamage(person2.attack());
+
+	if(_config.debug)person1.identity();
+	if(_config.debug)person2.identity();
 
 
 /***/ },
@@ -66,12 +100,13 @@
 
 	"use strict"
 
-	module.exports = (function(){
+	module.exports = (function() {
 	  return {
 	    'path': {
-	      'classes' : './src/Classes/'
+	      'classes': './src/Classes/'
 	    },
-	    'canvasId' : 'gameCanvas'
+	    'canvasId': 'gameCanvas',
+	    'debug': false
 	  };
 	})();
 
@@ -99,42 +134,19 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	"use strict"
 
-	const Item = __webpack_require__(4);
-	const Weapon = __webpack_require__(5);
-	const SkillSet = __webpack_require__(6);
-
-
-	function getMeleeDamage(){
-	  return 1;
-	}
-
-	function getDistanceDamage(){
-	  return 1;
-	}
-
 	class Person{
-	  constructor(name, life, position){
-	    life = Number(life) || 100;
 
+	  /*Expects (String, Number, {x:Number, y:Number}, {x:Number, y:Number}, Number)*/
+	  constructor(name, life, position, direction, radius){
 	    this.name = name;
 	    this.life = life;
 	    this.position = position;
-	    this.itens = new Array();
-	    this.skill = new SkillSet();
-
-	    this.equip = {
-	      'pocket1': undefined, 'pocket2': undefined,
-	      'handLeft': undefined, 'handRight': undefined,
-	      'armLeft': undefined, 'armRight': undefined,
-	      'feet': undefined,
-	      'legs': undefined,
-	      'torso': undefined,
-	      'ammo': 1
-	    };
+	    this.direction = direction;
+	    this.radius = radius;
 
 	    this.say = function(str){
 	      console.log(this.name + " says \"" + str + "\"");
@@ -142,31 +154,12 @@
 	    this.shout = function(str){
 	      console.log(this.name + " shouts \"" + str + "\"");
 	    };
-	    this.collectItem = function(item){
-	      this.itens.push(item);
-	      console.log(this.name + " got the item " + JSON.stringify(item));
+	    this.identity = function(){
+	      console.info(this);
 	    };
-	    this.discartLasttItem = function(){
-	      let item = this.itens.pop();
-	      console.log(this.name + " drop the item " + JSON.stringify(item));
-	      return item;
-	    };
-	    this.printItens = function(){
-	      console.log(this.name + " have " + JSON.stringify(this.itens));
-	    };
-
 	    this.attack = function(){
-	      let damage = 0;
-	      if(this.equip.handRight && this.equip.handRight.type === "weapon"){
-	        damage = this.equip.handRight.getDammage() || 0;
-	//console.log("1.0: " + damage);
-	      }
-	      else{
-	        damage = this.skill.getSkill("strength");
-	//console.log("1.1: " + damage);
-	      }
+	      let damage = 10;
 	      console.log(this.name + " defers " + damage + " of brute damage");
-	//console.log("2.0: " + damage);
 	      return damage;
 	    };
 	    this.receiveDamage = function(damage){
@@ -182,120 +175,53 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict"
-
-	class Item{
-	  constructor(name, type, value){
-	    this.name = name;
-	    this.type = type;
-	    this.value = value;
-	  }
-	}
-
-	module.exports = Item;
+	var map = {
+		"./src/Classes/Wall.js": 5
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 4;
 
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	"use strict"
+	"use strict";
 
-	const Item = __webpack_require__(4);
+	class Wall {
+	  constructor(position, direction, heidth, width) {
+	    this.position = position;
+	    this.direction = direction;
+	    this.heidth = heidth;
+	    this.width = width;
 
-
-	class Weapon extends Item{
-	  constructor(name, type, value, weaponType, range, dificulty, baseDamage){
-	    super(name, type, value);
-	    this.weaponType = weaponType;
-	    this.range = range;
-	    this.dificulty = dificulty;
-
-	    this.getWeaponType = function(){
-	      return weaponType;
-	    }
-	    this.range = function(){
-	      return range;
-	    }
-
-	    this.getMeleeDamage = function(){
-	      return baseDamage;
-	    }
-	    this.getRangedDammage = function(){
-	      return baseDamage;
-	    }
-	    this.getDammage = function(){
-	      if(this.weaponType == "melee"){
-	        return this.getMeleeDamage();
-	      }
-	      if(this.weaponType == "ranged"){
-	        return this.getRangedDammage();
-	      }
-	    }
+	    this.identity = function(){
+	      console.info(this);
+	    };
 	  }
 	}
 
-	module.exports = Weapon;
+	module.exports = Wall;
 
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
-
-	"use strict"
-
-	class SkillSet{
-	  constructor(endurance, strength, speed, dexterity, aim){
-	    endurance = endurance || 1;
-	    strength = strength || 1;
-	    speed = speed || 1;
-	    dexterity = dexterity || 1;
-	    aim = aim || 1;
-
-	    this.skill = {
-	      'endurance': endurance,
-	      'strength': strength,
-	      'speed': speed,
-	      'dexterity': dexterity,
-	      'aim': aim
-	    };
-	    this.experience = {
-	      'endurance': endurance,
-	      'strength': strength,
-	      'speed': speed,
-	      'dexterity': dexterity,
-	      'aim': aim
-	    };
-	    this.facility = {
-	      'endurance': endurance,
-	      'strength': strength,
-	      'speed': speed,
-	      'dexterity': dexterity,
-	      'aim': aim
-	    };
-	    this.getSkill = function(s){
-	      return this.skill[s];
-	    };
-	    this.getExperience = function(s){
-	      return this.experience[s];
-	    };
-	    this.addSkillExperience = function(s, e){
-	      this.experience[s] = Number(this.experience[s]) + Number(e);
-	      return this.experience[s]
-	    }
-	  };
-	}
-	module.exports = SkillSet;
-
-
-/***/ },
-/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./src/Classes/Map.js": 8,
+		"./src/Classes/Map.js": 7,
 		"lodash/_Map.js": 9,
 		"lodash/_WeakMap.js": 21,
 		"lodash/_arrayMap.js": 22,
@@ -327,7 +253,42 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 7;
+	webpackContext.id = 6;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	const Wall = __webpack_require__(5);
+	const Person = __webpack_require__(3);
+	const Bullet = __webpack_require__(8);
+
+	class Map {
+	  constructor(walls, persons, bullets) {
+	    /*Verifica se walls é um vetor de objetos. Caso seja um objeto que não um vetor, não haverá walls*/
+	    this.walls = (typeof walls === "object" && walls.forEach)? walls : typeof walls === "object"? [walls] : [];
+	    this.persons = (typeof persons === "object" && persons.forEach)? persons : typeof persons === "object"? [persons] : [];
+	    this.bullets = (typeof bullets === "object" && bullets.forEach)? bullets : typeof bullets === "object"? [bullets] : [];
+
+	    /*Methods*/
+	    this.updatePersons = function(){
+	      this.persons = (typeof persons === "object" && persons.forEach)? persons : typeof persons === "object"? [persons] : [];
+	      return this.persons;
+	    };
+	    this.updateBullets = function(){
+	      this.bullets = (typeof bullets === "object" && bullets.forEach)? bullets : typeof bullets === "object"? [bullets] : [];
+	      return this.bullets;
+	    };
+	    this.identity = function(){
+	      console.info(this);
+	    };
+	  }
+	}
+
+	module.exports = Map;
 
 
 /***/ },
@@ -335,34 +296,15 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	/*
-	const Person = require('Person.js');
-	const Bullet = require('Bullet.js');
-	*/
-	class Map {
-	  constructor() {
-	    this.generalPosition = {
-	      'x': 0,
-	      'y': 0
-	    };
-	    this.dimensions = {
-	      'x': 600,
-	      'y': 600
-	    };
-	    this.walls = [{
-	      'minX': 300,
-	      'maxX': 330,
-	      'minY': 50,
-	      'maxY': 400
-	    }];
 
-	    this.getWalls = function(){
-	      return this.walls;
-	    };
+	class Bullet{
+	  constructor(position, direction, speed, damage){
+	    this.position = position;
+	    this.direction = direction;
+	    this.speed = speed;
+	    this.damage = damage;
 	  }
 	}
-
-	module.exports = Map;
 
 
 /***/ },
@@ -9008,6 +8950,71 @@
 		}
 		return newMap;
 	};
+
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./src/Classes/Bullet.js": 8
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 231;
+
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./src/Classes/BackEnd.js": 233
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 232;
+
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	const Map = __webpack_require__(7);
+	const Wall = __webpack_require__(5);
+	const Person = __webpack_require__(3);
+	const Bullet = __webpack_require__(8);
+
+	class BackEnd{
+	  constructor(maps){
+	    this.maps = maps;
+	    this.identify = function(){
+	      console.info(this);
+	    };
+	  }
+	}
+
+	module.exports = BackEnd;
 
 
 /***/ }

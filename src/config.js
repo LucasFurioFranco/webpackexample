@@ -1,10 +1,11 @@
 "use strict"
 
-module.exports = (function(){
+module.exports = (function() {
   return {
     'path': {
-      'classes' : './src/Classes/'
+      'classes': './src/Classes/'
     },
-    'canvasId' : 'gameCanvas'
+    'canvasId': 'gameCanvas',
+    'debug': false
   };
 })();
